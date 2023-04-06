@@ -2,12 +2,13 @@ const express = require("express");
 const app = express();
 
 require("dotenv").config();
+require("./db");
+
 const port = process.env.PORT || 3000;
 
-app.get("/", (req, res) => {
-  res.json({ message: "Olá mundo!" });
-});
+const pictureRouter = require("./Routes/picture");
+app.use("/pictures", pictureRouter);
 
 app.listen(port, () => {
-  console.log(`Servidor está rodando na porta http://localhost:${port}`);
+  console.log(`Server started on http://localhost:${port}`);
 });
