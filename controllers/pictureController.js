@@ -1,5 +1,6 @@
 const fs = require("fs");
 const Picture = require("../models/Picture");
+const upload = require("../config/multer");
 
 exports.create = async (req, res) => {
   try {
@@ -10,8 +11,8 @@ exports.create = async (req, res) => {
       name,
       src: file.path,
     });
-
     await picture.save();
+
     res.json({ picture, message: "Imagem inserida com sucesso" });
   } catch (err) {
     res.status(500).json({ message: "Erro ao salvar a imagem." });
@@ -31,9 +32,13 @@ exports.remove = async (req, res) => {
   try {
     const picture = await Picture.findById(req.params.id);
     if (!picture) {
-      return res.status(404).json({ error: "Imagem não encontrada" });
+      return res.status(404).json({ message: "Imagem não encontrada" });
     }
+    await picture.deleteOne();
+    fs.unlinkSync(picture.src);
+
+    res.json({ message: "Dado removido com sucesso" });
   } catch (err) {
-    res.status(500).json({ message: "Erro ao apagar a imagem" });
+    res.status(500).json({ message: "Erro ao remover a imagem" });
   }
 };
